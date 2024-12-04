@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "organization-manager"
+version = "0.1.0"
+description = ""
+authors = ["sagar <sagarrishabh68@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.6"
+uvicorn = "^0.32.1"
+pydantic = {extras = ["email"], version = "^2.10.3"}
+sqlalchemy = "^2.0.36"
+alembic = "^1.14.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
