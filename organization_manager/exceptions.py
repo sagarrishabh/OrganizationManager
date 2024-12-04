@@ -25,3 +25,11 @@ class OrganizationUserCreationError(BaseError):
     def __init__(self, message="Failed to create the organization user"):
         self.message = message
         super().__init__(self.message)
+
+
+class OrganizationGetError(BaseError):
+    """Exception raised for errors during the organization creation."""
+
+    def __init__(self, message="Failed to get the organization"):
+        self.message = message
+        super().__init__(self.message)

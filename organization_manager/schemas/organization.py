@@ -7,6 +7,12 @@ class OrganizationCreateRequest(BaseModel):
     organization_name: str
 
 
+class OrganizationGetRequest(BaseModel):
+    organization_name: str
+    offset: int = 0,
+    limit: int = 10
+
+
 class OrganizationDomainModel(BaseModel):
     id: int
     organization_name: str

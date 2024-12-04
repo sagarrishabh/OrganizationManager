@@ -1,7 +1,9 @@
+from typing import List
+
 from organization_manager.db.repos.organization import OrganizationRepository
 from organization_manager.db.repos.user import UserRepository
-from organization_manager.schemas.organization import OrganizationCreateRequest, OrganizationDomainModel
-from organization_manager.schemas.organization_database import OrganizationDBCreateRequest
+from organization_manager.schemas.organization import OrganizationCreateRequest, OrganizationDomainModel, \
+    OrganizationGetRequest
 from organization_manager.schemas.user import OrganizationUserCreateRequest
 from organization_manager.services.create_database_service import CreateOrganizationDatabaseService
 
@@ -27,3 +29,7 @@ class OrganizationService:
         self.create_organization_database_service.create_database(organization=organization)
 
         return organization
+
+    async def get_organization_by_name(self, org_get_request: OrganizationGetRequest) -> List[OrganizationDomainModel]:
+        organizations = await self.organization_repo.get_by_name(org_get_request)
+        return organizations
