@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from organization_manager.db.models.base import Base
+from organization_manager.db.models.base import MasterBase
 from organization_manager.db.database import DATABASE_URL
 from organization_manager.db.models import *
 
@@ -24,7 +24,7 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
 
-target_metadata = Base.metadata
+target_metadata = MasterBase.metadata
 config.set_main_option('sqlalchemy.url', DATABASE_URL)
 
 # other values from the config, defined by the needs of env.py,

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 
 
-class OrganizationCreate(BaseModel):
+class OrganizationCreateRequest(BaseModel):
     email: EmailStr
     password: str
     organization_name: str
@@ -9,7 +9,6 @@ class OrganizationCreate(BaseModel):
 
 class OrganizationDomainModel(BaseModel):
     id: int
-    email: EmailStr
     organization_name: str
 
     class Config:

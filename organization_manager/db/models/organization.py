@@ -1,11 +1,14 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 
-from organization_manager.db.models.base import Base
+from organization_manager.db.models.base import MasterBase
 
 
-class Organization(Base):
+class Organization(MasterBase):
     __tablename__ = 'organizations'
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True, nullable=False)
     organization_name = Column(String, index=True, nullable=False)
+
+    # Relationship to link an organization to their user mappings
+    users = relationship("OrganizationUserMapping", back_populates="organization")
