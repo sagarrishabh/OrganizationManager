@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from organization_manager.db.models.user import User, OrganizationUserMapping
 from organization_manager.exceptions import OrganizationUserCreationError
 from organization_manager.schemas.user import OrganizationUserCreateRequest, OrganizationUserDomainModel
+from organization_manager.utils.hash_password import hash_password
 
 
 class UserRepository:
@@ -17,7 +18,7 @@ class UserRepository:
         try:
             user = User(
                 email=str(org_user_create.email),
-                password=org_user_create.password,
+                password=hash_password(org_user_create.password),
             )
             self.db_session.add(user)
             self.db_session.commit()
