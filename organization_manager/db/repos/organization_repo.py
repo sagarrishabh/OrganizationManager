@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from organization_manager.db.models.organization import Organization
 from organization_manager.db.schemas.organization_types import OrganizationCreateRequest, OrganizationDomainModel, \
-    OrganizationGetRequest
+    GetOrganizationRequest
 from organization_manager.exceptions import OrganizationCreationError, OrganizationGetError
 
 
@@ -31,7 +31,7 @@ class OrganizationRepository:
 
     async def get_organization_by_name(
             self,
-            org_get_request: OrganizationGetRequest,
+            org_get_request: GetOrganizationRequest,
 
     ) -> List[OrganizationDomainModel]:
         try:

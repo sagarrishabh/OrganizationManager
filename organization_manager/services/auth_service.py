@@ -6,7 +6,7 @@ from pydantic import EmailStr
 
 from organization_manager.core.config import settings
 from organization_manager.db.repos.user_repo import UserRepository
-from organization_manager.db.schemas import UserDomainModel
+from organization_manager.db.schemas.user_types import UserDomainModel
 from organization_manager.utils.hash_password import verify_password
 
 

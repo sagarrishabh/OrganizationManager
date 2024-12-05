@@ -6,11 +6,10 @@ from organization_manager.db.database import SessionLocal
 from organization_manager.db.repos.organization_database_repo import OrganizationDatabaseRepository
 from organization_manager.db.repos.organization_repo import OrganizationRepository
 from organization_manager.db.repos.user_repo import UserRepository
-from organization_manager.db.schemas import OrganizationCreateRequest, OrganizationDomainModel, \
-    OrganizationGetRequest
 from organization_manager.db.schemas.dynamic_database_types import CreateOrganizationDatabaseRequest
-from organization_manager.services.dynamic_database_service import CreateOrganizationDatabaseService, \
-    OrganizationDatabaseService
+from organization_manager.db.schemas.organization_types import OrganizationDomainModel, OrganizationCreateRequest, \
+    GetOrganizationRequest
+from organization_manager.services.dynamic_database_service import OrganizationDatabaseService
 from organization_manager.services.organization_service import OrganizationService
 
 router = APIRouter()
@@ -35,20 +34,17 @@ def get_user_repo(db_session=Depends(get_db)) -> UserRepository:
     )
 
 
-def get_create_organization_database_service() -> CreateOrganizationDatabaseService:
-    return CreateOrganizationDatabaseService()
+def get_create_organization_database_service() -> OrganizationDatabaseService:
+    return OrganizationDatabaseService()
 
 
 def get_organization_service(
         organization_repo: OrganizationRepository = Depends(get_organization_repo),
         user_repo: UserRepository = Depends(get_user_repo),
-        create_organization_database_service: CreateOrganizationDatabaseService = Depends(
-            get_create_organization_database_service)
 ) -> OrganizationService:
     return OrganizationService(
         organization_repo=organization_repo,
         user_repo=user_repo,
-        organization_database_service=create_organization_database_service
     )
 
 
@@ -85,7 +81,7 @@ async def create_organization(
 
 @router.get("/get", response_model=List[OrganizationDomainModel])
 async def get_organization(
-        org_get_request: OrganizationGetRequest = Depends(),
+        org_get_request: GetOrganizationRequest = Depends(),
         organization_service: OrganizationService = Depends(get_organization_service)
 ):
     try:
