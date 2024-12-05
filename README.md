@@ -19,7 +19,15 @@ The Organization Manager is a robust system for managing organizations, providin
 
 ## Installation
 
-1. **Install Poetry**:
+1. **Create and activate a virtual environment:**
+
+   For Python 3.12, you can create a virtual environment using:
+   ```bash
+   python -m venv env
+   source env/bin/activate  # On Windows use `env\Scripts\activate`
+   ```
+
+2. **Install Poetry**:
    
    Follow the installation guide from the [official Poetry website](https://python-poetry.org/docs/#installation) to set up Poetry on your environment.
 
@@ -29,15 +37,11 @@ The Organization Manager is a robust system for managing organizations, providin
     ```bash
     pip install poetry
     ```
-
-2. **Create and activate a virtual environment:**
-
-   For Python 3.12, you can create a virtual environment using:
+   Disable poetry's virtual env creation since we already created a virtual environment in the last step.
    ```bash
-   python -m venv env
-   source env/bin/activate  # On Windows use `env\Scripts\activate`
+   poetry config virtualenvs.create false
    ```
-
+   
 3. **Install dependencies:**
 
    With Poetry installed, navigate to your project directory and run:
