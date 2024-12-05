@@ -1,13 +1,11 @@
-from pydantic import BaseSettings
+from pydantic.v1 import BaseSettings
 
 
 class Settings(BaseSettings):
-    POSTGRES_USER: str = 'lazyfox'
-    POSTGRES_PASSWORD: str = 'lazyfox@123'
-    POSTGRES_DB: str = 'your_dbname'
-    POSTGRES_SERVER: str = 'localhost'
-    POSTGRES_PORT: str = '5432'
-    DATABASE_URL: str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    DATABASE_URL: str = "sqlite:///./organization_manager.db"
+    SECRET_KEY = "193d659e-8499-4562-a348-772e3be98e0c"
+    ALGORITHM = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 settings = Settings()

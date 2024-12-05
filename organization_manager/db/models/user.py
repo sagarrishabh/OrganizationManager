@@ -9,7 +9,7 @@ class User(MasterBase):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
-    password = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=False)
 
     # Relationship to link a user to their organization mappings
     organizations = relationship("OrganizationUserMapping", back_populates="user")

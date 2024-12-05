@@ -5,8 +5,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
+from organization_manager.core.config import settings
 from organization_manager.db.models.base import MasterBase
-from organization_manager.db.database import DATABASE_URL
 from organization_manager.db.models import *
 
 # this is the Alembic Config object, which provides
@@ -25,7 +25,7 @@ if config.config_file_name is not None:
 # target_metadata = None
 
 target_metadata = MasterBase.metadata
-config.set_main_option('sqlalchemy.url', DATABASE_URL)
+config.set_main_option('sqlalchemy.url', settings.DATABASE_URL)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

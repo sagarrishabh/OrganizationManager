@@ -18,6 +18,10 @@ class OrganizationService:
         self.create_organization_database_service = create_organization_database_service
         self.user_repo = user_repo
 
+    async def get_organization_by_name(self, org_get_request: OrganizationGetRequest) -> List[OrganizationDomainModel]:
+        organizations = await self.organization_repo.get_by_name(org_get_request)
+        return organizations
+
     async def create_organization(self, org_create: OrganizationCreateRequest) -> OrganizationDomainModel:
         organization = await self.organization_repo.create(org_create)
         organization_user = await self.user_repo.create_organization_user(org_user_create=OrganizationUserCreateRequest(
@@ -29,7 +33,3 @@ class OrganizationService:
         self.create_organization_database_service.create_database(organization=organization)
 
         return organization
-
-    async def get_organization_by_name(self, org_get_request: OrganizationGetRequest) -> List[OrganizationDomainModel]:
-        organizations = await self.organization_repo.get_by_name(org_get_request)
-        return organizations

@@ -9,6 +9,16 @@ class OrganizationUserCreateRequest(BaseModel):
     organization_id: int
 
 
+class AuthUserDomainModel(BaseModel):
+    id: int
+    email: EmailStr
+    hashed_password: str
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
+
+
 class UserDomainModel(BaseModel):
     id: int
     email: EmailStr
