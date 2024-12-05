@@ -66,7 +66,6 @@ class OrganizationRepository:
                 logger.info(f"No organizations found with name: {org_get_request.organization_name}", extra={
                     "organization_name": org_get_request.organization_name,
                 })
-                raise OrganizationGetError("No organizations found")
 
             # Convert ORM objects to domain models
             return OrganizationListDomainModel(

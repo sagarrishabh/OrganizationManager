@@ -4,7 +4,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 
 from organization_manager.core.config import settings
-from organization_manager.db.database import SessionLocal
+from organization_manager.db.database import get_db
 from organization_manager.db.repos.user_repo import UserRepository
 from organization_manager.db.schemas.auth_types import LoginRequest, TokenResponse
 from organization_manager.exceptions import UserGetError
@@ -13,15 +13,6 @@ from organization_manager.utils.custom_logger import CustomLogger
 
 logger = CustomLogger().get_logger()
 router = APIRouter()
-
-
-# Dependency to get DB session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 def get_user_repo(db_session=Depends(get_db)) -> UserRepository:
