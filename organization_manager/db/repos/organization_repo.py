@@ -4,16 +4,16 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from organization_manager.db.models.organization import Organization
-from organization_manager.exceptions import OrganizationCreationError, OrganizationGetError
-from organization_manager.schemas.organization import OrganizationCreateRequest, OrganizationDomainModel, \
+from organization_manager.db.schemas.organization_types import OrganizationCreateRequest, OrganizationDomainModel, \
     OrganizationGetRequest
+from organization_manager.exceptions import OrganizationCreationError, OrganizationGetError
 
 
 class OrganizationRepository:
     def __init__(self, db_session: Session):
         self.db_session = db_session
 
-    async def create(self, org_create: OrganizationCreateRequest) -> OrganizationDomainModel:
+    async def create_organization(self, org_create: OrganizationCreateRequest) -> OrganizationDomainModel:
         try:
             organization = Organization(
                 organization_name=org_create.organization_name
@@ -29,7 +29,7 @@ class OrganizationRepository:
 
         return OrganizationDomainModel.from_orm(organization)
 
-    async def get_by_name(
+    async def get_organization_by_name(
             self,
             org_get_request: OrganizationGetRequest,
 

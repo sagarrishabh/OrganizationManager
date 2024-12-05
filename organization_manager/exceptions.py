@@ -33,3 +33,9 @@ class OrganizationGetError(BaseError):
     def __init__(self, message="Failed to get the organization"):
         self.message = message
         super().__init__(self.message)
+
+class OrganizationDatabaseCreationError(BaseError):
+    """Exception raised for errors during the organization creation."""
+    def __init__(self, message="Failed to create the organization database"):
+        self.message = message
+        super().__init__(self.message)

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 
-from organization_manager.schemas.organization import OrganizationDomainModel
+from organization_manager.db.schemas.organization_types import OrganizationDomainModel
 
 
 class OrganizationUserCreateRequest(BaseModel):

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from organization_manager.db.models.user import User, OrganizationUserMapping
 from organization_manager.exceptions import OrganizationUserCreationError
-from organization_manager.schemas.user import OrganizationUserCreateRequest, OrganizationUserDomainModel, \
+from organization_manager.db.schemas import OrganizationUserCreateRequest, OrganizationUserDomainModel, \
     UserDomainModel, AuthUserDomainModel
 from organization_manager.utils.hash_password import hash_password
 

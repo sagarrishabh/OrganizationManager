@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from organization_manager.db.models.base import MasterBase
@@ -12,3 +12,11 @@ class Organization(MasterBase):
 
     # Relationship to link an organization to their user mappings
     users = relationship("OrganizationUserMapping", back_populates="organization")
+
+
+class OrganizationDatabase(MasterBase):
+    __tablename__ = 'organization_database'
+
+    organization_id = Column(Integer, ForeignKey('organizations.id'), primary_key=True)
+    database_name = Column(String, primary_key=True)
+    database_url = Column(String, nullable=False)

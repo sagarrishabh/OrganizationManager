@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from organization_manager.core.config import settings
 from organization_manager.db.database import SessionLocal
-from organization_manager.db.repos.user import UserRepository
-from organization_manager.schemas.auth import LoginRequest, TokenResponse
+from organization_manager.db.repos.user_repo import UserRepository
+from organization_manager.db.schemas.auth_types import LoginRequest, TokenResponse
 from organization_manager.services.auth_service import AuthService
 
 router = APIRouter()

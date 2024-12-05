@@ -3,11 +3,14 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 
 from organization_manager.db.database import SessionLocal
-from organization_manager.db.repos.organization import OrganizationRepository
-from organization_manager.db.repos.user import UserRepository
-from organization_manager.schemas.organization import OrganizationCreateRequest, OrganizationDomainModel, \
+from organization_manager.db.repos.organization_database_repo import OrganizationDatabaseRepository
+from organization_manager.db.repos.organization_repo import OrganizationRepository
+from organization_manager.db.repos.user_repo import UserRepository
+from organization_manager.db.schemas import OrganizationCreateRequest, OrganizationDomainModel, \
     OrganizationGetRequest
-from organization_manager.services.create_database_service import CreateOrganizationDatabaseService
+from organization_manager.db.schemas.dynamic_database_types import CreateOrganizationDatabaseRequest
+from organization_manager.services.dynamic_database_service import CreateOrganizationDatabaseService, \
+    OrganizationDatabaseService
 from organization_manager.services.organization_service import OrganizationService
 
 router = APIRouter()
@@ -45,17 +48,37 @@ def get_organization_service(
     return OrganizationService(
         organization_repo=organization_repo,
         user_repo=user_repo,
-        create_organization_database_service=create_organization_database_service
+        organization_database_service=create_organization_database_service
     )
+
+
+def get_organization_database_repo(db_session=Depends(get_db)) -> OrganizationDatabaseRepository:
+    return OrganizationDatabaseRepository(db_session=db_session)
+
+
+def get_organization_database_service(
+        organization_database_repo: OrganizationDatabaseRepository = Depends(
+            get_organization_database_repo)
+) -> OrganizationDatabaseService:
+    return OrganizationDatabaseService(organization_database_repo=organization_database_repo)
 
 
 @router.post("/create", response_model=OrganizationDomainModel)
 async def create_organization(
         org_create: OrganizationCreateRequest,
-        organization_service: OrganizationService = Depends(get_organization_service)
+        organization_service: OrganizationService = Depends(get_organization_service),
+        organization_database_service: OrganizationDatabaseService = Depends(get_organization_database_service)
 ):
     try:
-        return await organization_service.create_organization(org_create)
+        organization = await organization_service.create_organization(org_create)
+        organization_database = await organization_database_service.create_organization_database(
+            create_organization_database_request=CreateOrganizationDatabaseRequest(
+                organization=organization
+            )
+        )
+        return OrganizationDomainModel.from_orm(
+            organization
+        )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
