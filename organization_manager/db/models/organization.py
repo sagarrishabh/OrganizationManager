@@ -8,15 +8,16 @@ class Organization(MasterBase):
     __tablename__ = 'organizations'
 
     id = Column(Integer, primary_key=True, index=True)
-    organization_name = Column(String, index=True, nullable=False)
+    name = Column(String, index=True, nullable=False)
 
     # Relationship to link an organization to their user mappings
     users = relationship("OrganizationUserMapping", back_populates="organization")
 
 
 class OrganizationDatabase(MasterBase):
-    __tablename__ = 'organization_database'
+    __tablename__ = 'organization_databases'
 
-    organization_id = Column(Integer, ForeignKey('organizations.id'), primary_key=True)
-    database_name = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
+    organization_id = Column(Integer, ForeignKey('organizations.id'), nullable=False)
+    database_name = Column(String, nullable=True)
     database_url = Column(String, nullable=False)

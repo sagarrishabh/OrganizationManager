@@ -2,7 +2,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from organization_manager.db.models.organization import OrganizationDatabase
-from organization_manager.db.schemas.dynamic_database_types import OrganizationDatabaseDomainModel, \
+from organization_manager.db.schemas.organization_database_types import OrganizationDatabaseDomainModel, \
     CreateOrganizationDatabaseRequest
 from organization_manager.exceptions import OrganizationDatabaseCreationError
 from organization_manager.utils.custom_logger import CustomLogger
@@ -20,16 +20,16 @@ class OrganizationDatabaseRepository:
             self, create_organization_database_request: CreateOrganizationDatabaseRequest
     ) -> OrganizationDatabaseDomainModel:
         logger.info(
-            f"OrganizationDatabaseRepository.create_database_record called with database_name: {create_organization_database_request.database_name}",
+            f"OrganizationDatabaseRepository.create_database_record called with database_name: {create_organization_database_request.database_name} and organization_id: {create_organization_database_request.organization.id} and database_url: {create_organization_database_request.database_url}",
             extra={
                 "database_name": create_organization_database_request.database_name,
-                "organization_id": create_organization_database_request.organization_id,
+                "organization_id": create_organization_database_request.organization.id,
                 "database_url": create_organization_database_request.database_url,
             })
 
         try:
             organization_database = OrganizationDatabase(
-                organization_id=create_organization_database_request.organization_id,
+                organization_id=create_organization_database_request.organization.id,
                 database_name=create_organization_database_request.database_name,
                 database_url=create_organization_database_request.database_url,
             )

@@ -7,12 +7,12 @@ from organization_manager.db.database import SessionLocal
 from organization_manager.db.repos.organization_database_repo import OrganizationDatabaseRepository
 from organization_manager.db.repos.organization_repo import OrganizationRepository
 from organization_manager.db.repos.user_repo import UserRepository
-from organization_manager.db.schemas.dynamic_database_types import CreateOrganizationDatabaseRequest
+from organization_manager.db.schemas.organization_database_types import CreateOrganizationDatabaseRequest
 from organization_manager.db.schemas.organization_types import OrganizationDomainModel, OrganizationCreateRequest, \
     GetOrganizationRequest
 from organization_manager.db.schemas.user_types import OrganizationUserCreateRequest
-from organization_manager.services.dynamic_database_service import OrganizationDatabaseService
 from organization_manager.services.organization_admin_service import OrganizationAdminService
+from organization_manager.services.organization_database_service import OrganizationDatabaseService
 from organization_manager.services.organization_service import OrganizationService
 from organization_manager.utils.custom_logger import CustomLogger
 
@@ -69,7 +69,8 @@ async def create_organization(
         org_create_request: OrganizationCreateRequest,
         organization_service: OrganizationService = Depends(get_organization_service),
         organization_database_service: OrganizationDatabaseService = Depends(get_organization_database_service),
-        organization_admin_service: OrganizationAdminService = Depends(get_organization_admin_service)
+        organization_admin_service: OrganizationAdminService = Depends(get_organization_admin_service),
+        db_session=Depends(get_db)
 ):
     logger.info(
         "API called to create organization",
@@ -80,13 +81,6 @@ async def create_organization(
         # Create organization
         organization = await organization_service.create_organization(org_create_request=org_create_request)
 
-        # Create organization database and save it to master db
-        organization_database = await organization_database_service.create_organization_database(
-            create_organization_database_request=CreateOrganizationDatabaseRequest(
-                organization=organization
-            )
-        )
-
         # Create organization admin user and map it to organization
         organization_admin = await organization_admin_service.create_organization_user(
             org_user_create=OrganizationUserCreateRequest(
@@ -96,11 +90,12 @@ async def create_organization(
             )
         )
 
-        logger.info("Organization created successfully", extra={
-            "organization_id": organization.id,
-            "organization_name": organization.organization_name,
-            "admin_user_id": organization_admin.id,
-        })
+        # Create organization database and save it to master db
+        organization_database = await organization_database_service.create_organization_database(
+            create_organization_database_request=CreateOrganizationDatabaseRequest(
+                organization=organization
+            )
+        )
 
         return OrganizationDomainModel.from_orm(
             organization

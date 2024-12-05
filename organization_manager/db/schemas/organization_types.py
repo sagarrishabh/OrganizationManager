@@ -30,7 +30,7 @@ class GetOrganizationRequest(BaseModel):
 
 class OrganizationDomainModel(BaseModel):
     id: int = Field(description="Id of the organization", examples=[1234])
-    organization_name: str = Field(description="Name of the organization", examples=["Nava"])
+    name: str = Field(description="Name of the organization", examples=["Nava"])
 
     class Config:
         orm_mode = True

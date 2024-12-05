@@ -28,10 +28,9 @@ class OrganizationService:
 
         organization = await self.organization_repo.create_organization(org_create_request=org_create_request)
 
-        logger.info(" organization created successfully", extra={
+        logger.info("Organization created successfully", extra={
             "organization_id": organization.id,
-            "organization_name": organization.organization_name,
-            "email": organization.email,
+            "organization_name": organization.name,
         })
 
         return organization

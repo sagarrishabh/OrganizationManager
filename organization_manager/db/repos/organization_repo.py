@@ -24,7 +24,7 @@ class OrganizationRepository:
 
         try:
             organization = Organization(
-                organization_name=org_create_request.organization_name
+                name=org_create_request.organization_name
             )
 
             self.db_session.add(organization)
@@ -33,7 +33,7 @@ class OrganizationRepository:
 
         except SQLAlchemyError as e:
             self.db_session.rollback()
-            logger.error(" Error while creating organization DB entry", exc_info=e, extra={
+            logger.error("Error while creating organization DB entry", exc_info=e, extra={
                 "organization_name": org_create_request.organization_name,
             })
             raise OrganizationCreationError
@@ -48,7 +48,7 @@ class OrganizationRepository:
         try:
             query = (
                 self.db_session.query(Organization)
-                .filter(Organization.organization_name.like(f"%{org_get_request.organization_name}%"))
+                .filter(Organization.name.like(f"%{org_get_request.organization_name}%"))
                 .offset(org_get_request.offset)
                 .limit(org_get_request.limit)
             )
