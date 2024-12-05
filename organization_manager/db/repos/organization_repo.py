@@ -7,16 +7,24 @@ from organization_manager.db.models.organization import Organization
 from organization_manager.db.schemas.organization_types import OrganizationCreateRequest, OrganizationDomainModel, \
     GetOrganizationRequest
 from organization_manager.exceptions import OrganizationCreationError, OrganizationGetError
+from organization_manager.utils.custom_logger import CustomLogger
 
+logger = CustomLogger().get_logger()
 
 class OrganizationRepository:
     def __init__(self, db_session: Session):
         self.db_session = db_session
 
-    async def create_organization(self, org_create: OrganizationCreateRequest) -> OrganizationDomainModel:
+        logger.info("OrganizationRepository Initialized")
+
+    async def create_organization(self, org_create_request: OrganizationCreateRequest) -> OrganizationDomainModel:
+        logger.info(f"OrganizationRepository.create_organization called with organization_name: {org_create_request.organization_name}", extra={
+            "organization_name": org_create_request.organization_name,
+        })
+
         try:
             organization = Organization(
-                organization_name=org_create.organization_name
+                organization_name=org_create_request.organization_name
             )
 
             self.db_session.add(organization)
@@ -25,6 +33,9 @@ class OrganizationRepository:
 
         except SQLAlchemyError as e:
             self.db_session.rollback()
+            logger.error(" Error while creating organization DB entry", exc_info=e, extra={
+                "organization_name": org_create_request.organization_name,
+            })
             raise OrganizationCreationError
 
         return OrganizationDomainModel.from_orm(organization)

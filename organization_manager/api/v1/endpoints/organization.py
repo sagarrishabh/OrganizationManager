@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -13,6 +14,9 @@ from organization_manager.db.schemas.user_types import OrganizationUserCreateReq
 from organization_manager.services.dynamic_database_service import OrganizationDatabaseService
 from organization_manager.services.organization_admin_service import OrganizationAdminService
 from organization_manager.services.organization_service import OrganizationService
+from organization_manager.utils.custom_logger import CustomLogger
+
+logger = CustomLogger().get_logger()
 
 router = APIRouter()
 
@@ -62,31 +66,48 @@ def get_organization_admin_service(user_repo: UserRepository = Depends(get_user_
 
 @router.post("/create", response_model=OrganizationDomainModel)
 async def create_organization(
-        org_create: OrganizationCreateRequest,
+        org_create_request: OrganizationCreateRequest,
         organization_service: OrganizationService = Depends(get_organization_service),
         organization_database_service: OrganizationDatabaseService = Depends(get_organization_database_service),
         organization_admin_service: OrganizationAdminService = Depends(get_organization_admin_service)
 ):
+    logger.info(
+        "API called to create organization",
+        extra={"organisation_name": org_create_request.organization_name, "email": org_create_request.email}
+    )
+
     try:
-        organization = await organization_service.create_organization(org_create)
+        # Create organization
+        organization = await organization_service.create_organization(org_create_request=org_create_request)
+
+        # Create organization database and save it to master db
         organization_database = await organization_database_service.create_organization_database(
             create_organization_database_request=CreateOrganizationDatabaseRequest(
                 organization=organization
             )
         )
+
+        # Create organization admin user and map it to organization
         organization_admin = await organization_admin_service.create_organization_user(
             org_user_create=OrganizationUserCreateRequest(
-                email=org_create.email,
-                password=org_create.password,
+                email=org_create_request.email,
+                password=org_create_request.password,
                 organization_id=organization.id
             )
         )
+
+        logger.info("Organization created successfully", extra={
+            "organization_id": organization.id,
+            "organization_name": organization.organization_name,
+            "admin_user_id": organization_admin.id,
+        })
 
         return OrganizationDomainModel.from_orm(
             organization
         )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        logger.error("Exception occurred while creating organization", exc_info=e, extra={"exception": str(e)})
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(e))
 
 
 @router.get("/get", response_model=List[OrganizationDomainModel])
