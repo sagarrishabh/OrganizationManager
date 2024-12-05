@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from organization_manager.db.models.user import User, OrganizationUserMapping
 from organization_manager.db.schemas.user_types import OrganizationUserCreateRequest, OrganizationUserDomainModel, \
     UserDomainModel, AuthUserDomainModel
-from organization_manager.exceptions import OrganizationUserCreationError
+from organization_manager.exceptions import OrganizationUserCreationError, UserGetError
 from organization_manager.utils.custom_logger import CustomLogger
 from organization_manager.utils.hash_password import hash_password
 
@@ -72,4 +72,7 @@ class UserRepository:
 
     async def get_auth_user(self, email: EmailStr) -> AuthUserDomainModel:
         user = self.db_session.query(User).filter(User.email == email).first()
+        if not user:
+            logger.error(f"User with email: {email} not found")
+            raise UserGetError("User not found")
         return AuthUserDomainModel.from_orm(user)
