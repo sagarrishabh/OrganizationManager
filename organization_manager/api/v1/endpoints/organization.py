@@ -70,7 +70,6 @@ async def create_organization(
         organization_service: OrganizationService = Depends(get_organization_service),
         organization_database_service: OrganizationDatabaseService = Depends(get_organization_database_service),
         organization_admin_service: OrganizationAdminService = Depends(get_organization_admin_service),
-        db_session=Depends(get_db)
 ):
     logger.info(
         "API called to create organization",
