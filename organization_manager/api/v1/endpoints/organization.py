@@ -9,7 +9,7 @@ from organization_manager.db.repos.organization_repo import OrganizationReposito
 from organization_manager.db.repos.user_repo import UserRepository
 from organization_manager.db.schemas.organization_database_types import CreateOrganizationDatabaseRequest
 from organization_manager.db.schemas.organization_types import OrganizationDomainModel, OrganizationCreateRequest, \
-    GetOrganizationRequest
+    GetOrganizationRequest, OrganizationListDomainModel
 from organization_manager.db.schemas.user_types import OrganizationUserCreateRequest
 from organization_manager.services.organization_admin_service import OrganizationAdminService
 from organization_manager.services.organization_database_service import OrganizationDatabaseService
@@ -105,12 +105,16 @@ async def create_organization(
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(e))
 
 
-@router.get("/get", response_model=List[OrganizationDomainModel])
+@router.get("/get", response_model=OrganizationListDomainModel)
 async def get_organization(
         org_get_request: GetOrganizationRequest = Depends(),
         organization_service: OrganizationService = Depends(get_organization_service)
 ):
+    logger.info(f"API called to get organization with name: {org_get_request.organization_name}", extra={
+        "organization_name": org_get_request.organization_name,
+    })
     try:
+        # Get organizations filtered by name
         return await organization_service.get_organization_by_name(org_get_request)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(e))

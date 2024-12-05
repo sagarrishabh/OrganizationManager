@@ -1,8 +1,6 @@
-from typing import List
-
 from organization_manager.db.repos.organization_repo import OrganizationRepository
 from organization_manager.db.schemas.organization_types import OrganizationDomainModel, GetOrganizationRequest, \
-    OrganizationCreateRequest
+    OrganizationCreateRequest, OrganizationListDomainModel
 from organization_manager.utils.custom_logger import CustomLogger
 
 logger = CustomLogger().get_logger()
@@ -14,7 +12,14 @@ class OrganizationService:
 
         logger.info("OrganizationService Initialized")
 
-    async def get_organization_by_name(self, org_get_request: GetOrganizationRequest) -> List[OrganizationDomainModel]:
+    async def get_organization_by_name(self, org_get_request: GetOrganizationRequest) -> OrganizationListDomainModel:
+        logger.info(
+            f"OrganizationService.get_organization_by_name called with organization_name: {org_get_request.organization_name}",
+            extra={
+                "organization_name": org_get_request.organization_name,
+                "offset": org_get_request.offset,
+                "limit": org_get_request.limit,
+            })
         organizations = await self.organization_repo.get_organization_by_name(org_get_request)
         return organizations
 

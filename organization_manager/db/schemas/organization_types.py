@@ -23,9 +23,9 @@ class OrganizationCreateRequest(BaseModel):
 
 
 class GetOrganizationRequest(BaseModel):
-    organization_name: str
-    offset: int = 0,
-    limit: int = 10
+    organization_name: str = Field(description="Name of the organization that has to queried", examples=["Nava"])
+    offset: int = Field(description="Offset of the query", default=0, examples=[0])
+    limit: int = Field(description="Limit of the query", default=10, examples=[10])
 
 
 class OrganizationDomainModel(BaseModel):
@@ -35,3 +35,6 @@ class OrganizationDomainModel(BaseModel):
     class Config:
         orm_mode = True
         from_attributes = True
+
+class OrganizationListDomainModel(BaseModel):
+    organizations: list[OrganizationDomainModel] = Field(description="List of organizations")

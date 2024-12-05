@@ -1,15 +1,14 @@
-from typing import List
-
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from organization_manager.db.models.organization import Organization
 from organization_manager.db.schemas.organization_types import OrganizationCreateRequest, OrganizationDomainModel, \
-    GetOrganizationRequest
+    GetOrganizationRequest, OrganizationListDomainModel
 from organization_manager.exceptions import OrganizationCreationError, OrganizationGetError
 from organization_manager.utils.custom_logger import CustomLogger
 
 logger = CustomLogger().get_logger()
+
 
 class OrganizationRepository:
     def __init__(self, db_session: Session):
@@ -18,9 +17,11 @@ class OrganizationRepository:
         logger.info("OrganizationRepository Initialized")
 
     async def create_organization(self, org_create_request: OrganizationCreateRequest) -> OrganizationDomainModel:
-        logger.info(f"OrganizationRepository.create_organization called with organization_name: {org_create_request.organization_name}", extra={
-            "organization_name": org_create_request.organization_name,
-        })
+        logger.info(
+            f"OrganizationRepository.create_organization called with organization_name: {org_create_request.organization_name}",
+            extra={
+                "organization_name": org_create_request.organization_name,
+            })
 
         try:
             organization = Organization(
@@ -44,7 +45,14 @@ class OrganizationRepository:
             self,
             org_get_request: GetOrganizationRequest,
 
-    ) -> List[OrganizationDomainModel]:
+    ) -> OrganizationListDomainModel:
+        logger.info(
+            f"OrganizationRepository.get_organization_by_name called with organization_name: {org_get_request.organization_name}",
+            extra={
+                "organization_name": org_get_request.organization_name,
+                "offset": org_get_request.offset,
+                "limit": org_get_request.limit
+            })
         try:
             query = (
                 self.db_session.query(Organization)
@@ -55,10 +63,16 @@ class OrganizationRepository:
 
             organizations = query.all()
             if not organizations:
+                logger.info(f"No organizations found with name: {org_get_request.organization_name}", extra={
+                    "organization_name": org_get_request.organization_name,
+                })
                 raise OrganizationGetError("No organizations found")
 
             # Convert ORM objects to domain models
-            return [OrganizationDomainModel.from_orm(org) for org in organizations]
+            return OrganizationListDomainModel(
+                organizations=[OrganizationDomainModel.from_orm(org) for org in organizations]
+            )
 
         except SQLAlchemyError as e:
+            logger.error("Error while getting organization DB entry", exc_info=e)
             raise OrganizationGetError from e
