@@ -23,4 +23,4 @@ COPY . .
 EXPOSE 8000
 
 # Run Alembic migrations and then start the application
-CMD ["sh", "-c", "alembic upgrade head && uvicorn organization_manager.main:app --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "alembic upgrade head && uvicorn organization_manager.main:app --host localhost --port 8000"]
